@@ -1,0 +1,23 @@
+# 虚拟环境
+venv/
+.env
+
+# 编译文件
+__pycache__/
+*.py[cod]
+
+# VS Code配置
+.vscode/
+
+# 本地测试数据
+*.csv
+*.json
+
+# Jupyter Notebook检查点
+.ipynb_checkpoints/
+
+# 测试文件
+data/*
+GradCAM_draw/*
+pretrained_models/*
+my_tools/*
