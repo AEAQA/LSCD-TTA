@@ -30,7 +30,6 @@ def put_theta(model, theta):
                 else:
                     k_param_fn(v, name=str(name + '.' + k))
 
-        # WARN : running_mean, 和 running_var 不是 parameter，所以在 new 中不会被更新
         for (k, v) in tmp_model._parameters.items():
             if isinstance(v, torch.Tensor) and str(name + '.' + k) in theta.keys():
                 tmp_model._parameters[k] = theta[str(name + '.' + k)]

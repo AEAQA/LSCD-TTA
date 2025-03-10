@@ -103,7 +103,7 @@ def get_new_optimizers(model, lr=1e-4, names=('bn', 'conv', 'fc'), opt_type='sgd
         'bn': nn.BatchNorm2d,
         'conv': nn.Conv2d,
         'fc': nn.Linear,
-        'ln': nn.LayerNorm  # 如果你希望支持LayerNorm，也可以添加这一项
+        'ln': nn.LayerNorm
     }
     for name in names:
         name = name.lower()
@@ -113,7 +113,7 @@ def get_new_optimizers(model, lr=1e-4, names=('bn', 'conv', 'fc'), opt_type='sgd
             name = 'ln'
             params_group, paras_name = collect_module_params(model, module_class=classes[name])
 
-        if params_group:  # 如果当前组有参数则添加
+        if params_group
             for param in params_group:
                 opt_dic.append({'params': param, 'lr': lr})
     if not opt_dic:
@@ -121,9 +121,7 @@ def get_new_optimizers(model, lr=1e-4, names=('bn', 'conv', 'fc'), opt_type='sgd
     opt = get_optimizer(opt_dic, lr, opt_type, momentum)
     return opt
 
-"""
-ori
-"""
+
 def convert_to_target(net, norm, start=0, end=5, verbose=True, res50=False):
     def convert_norm(old_norm, new_norm, num_features, idx):
         norm_layer = new_norm(num_features, idx=idx).to(net.conv1.weight.device)
@@ -167,52 +165,3 @@ def convert_to_target(net, norm, start=0, end=5, verbose=True, res50=False):
                     converted_bns['L{}-BN{}-{}'.format(i, j, 2)] = bottleneck.downsample[1]
                     idx += 1
     return net, converted_bns
-
-
-"""
-Vit
-"""
-# def convert_to_target(net, norm, start=0, end=5, verbose=True, res50=False): 
-#     def convert_norm(old_norm, new_norm, num_features, idx):
-#         # ViT 中 LayerNorm 的转换
-#         norm_layer = new_norm(num_features).to(net.vit.conv_proj.weight.device)  # 修改为 net.vit.conv_proj
-#         if hasattr(norm_layer, 'load_old_dict'):
-#             info = 'Converted to : {}'.format(norm)
-#             norm_layer.load_old_dict(old_norm)
-#         elif hasattr(norm_layer, 'load_state_dict'):
-#             state_dict = old_norm.state_dict()
-#             info = norm_layer.load_state_dict(state_dict, strict=False)
-#         else:
-#             info = 'No load_old_dict() found!!!'
-#         if verbose:
-#             print(info)
-#         return norm_layer
-
-#     # ViT 中的层级结构，使用 net.vit.encoder.layers 访问
-#     layers = net.vit.encoder.layers  # Sequential 中的所有层，包含多个 EncoderBlock
-
-#     idx = 0
-#     converted_layers = {}
-    
-#     # 遍历 layers，逐个访问 EncoderBlock
-#     for i, layer in enumerate(layers):
-#         if not (start <= i < end):
-#             continue
-#         # 对每个 EncoderBlock 中的 LayerNorm 进行转换
-#         if hasattr(layer, 'ln_1') and isinstance(layer.ln_1, nn.LayerNorm):  # 确保是 LayerNorm 层
-#             layer.ln_1 = convert_norm(layer.ln_1, norm, layer.ln_1.normalized_shape[0], idx)
-#             converted_layers['L{}-LN{}-{}'.format(i, 0, 0)] = layer.ln_1
-#             idx += 1
-#         if hasattr(layer, 'ln_2') and isinstance(layer.ln_2, nn.LayerNorm):  # 确保是 LayerNorm 层
-#             layer.ln_2 = convert_norm(layer.ln_2, norm, layer.ln_2.normalized_shape[0], idx)
-#             converted_layers['L{}-LN{}-{}'.format(i, 0, 1)] = layer.ln_2
-#             idx += 1
-
-#         # 处理 MLP 中的 LayerNorm 层
-#         for j, sub_layer in enumerate(layer.mlp):
-#             if isinstance(sub_layer, nn.LayerNorm):  # 确保是 LayerNorm 层
-#                 sub_layer = convert_norm(sub_layer, norm, sub_layer.normalized_shape[0], idx)
-#                 converted_layers['L{}-MLP-LN{}-{}'.format(i, j, 0)] = sub_layer
-#                 idx += 1
-
-#     return net, converted_layers

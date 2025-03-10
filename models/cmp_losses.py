@@ -457,25 +457,16 @@ class Losses():
         ema_decay = 0.99
 
         def unsupervised_loss(logits, source_logits):
-            """
-            无监督损失：计算目标域模型与源域模型输出之间的连续性损失（MSE）。
-            """
             normalized_logits = F.normalize(logits, p=2, dim=-1)
             normalized_source_logits = F.normalize(source_logits, p=2, dim=-1)
             mse_loss = F.mse_loss(normalized_logits, normalized_source_logits)
             return mse_loss
 
         def contrastive_loss(source_feats, target_feats):
-            """
-            计算源域到目标域以及目标域到源域的对比损失（L_ct）。
-            """
             global device
 
-            # 归一化处理源域和目标域特征
             normalized_source_feats = F.normalize(source_feats, p=2, dim=-1)
             normalized_target_feats = F.normalize(target_feats, p=2, dim=-1)
-
-            # 计算源域到目标域的对比损失
             
             similarity_source_to_target = torch.matmul(normalized_source_feats, normalized_target_feats.T) / temperature
             labels = torch.arange(source_feats.size(0)).cuda()
@@ -483,7 +474,6 @@ class Losses():
             labels = labels.to(device)
             contrastive_loss_source_to_target = F.cross_entropy(similarity_source_to_target, labels)
 
-            # 计算目标域到源域的对比损失
             similarity_target_to_source = torch.matmul(normalized_target_feats, normalized_source_feats.T) / temperature
             contrastive_loss_target_to_source = F.cross_entropy(similarity_target_to_source, labels)
 
