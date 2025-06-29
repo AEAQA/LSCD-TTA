@@ -70,6 +70,14 @@ bash script/LSCD_TTA.sh
 ## Citation
 
 ```
-TODO
+@article{liang2025low,
+  title={Low Saturation Confidence Distribution-based Test-Time Adaptation for cross-domain remote sensing image classification},
+  author={Liang, Yu and Cao, Shilei and Zheng, Juepeng and Zhang, Xiucheng and Huang, Jianxi and Fu, Haohuan},
+  journal={International Journal of Applied Earth Observation and Geoinformation},
+  volume={139},
+  pages={104463},
+  year={2025},
+  publisher={Elsevier}
+}
 ```
 
